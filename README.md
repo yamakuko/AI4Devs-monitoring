@@ -50,6 +50,64 @@ Las especificaciones de todos los endpoints de API los tienes en [api-spec.yaml]
 
 La descripción y diagrama del modelo de datos los tienes en [ModeloDatos.md](./backend/ModeloDatos.md).
 
+## Infraestructura y Despliegue
+
+El proyecto utiliza Terraform para gestionar la infraestructura en AWS y la integración con Datadog para monitoreo.
+
+### Estructura de Infraestructura
+
+- **Instancias EC2**:
+  - Frontend: t2.micro en puerto 3000
+  - Backend: t2.micro en puerto 8080
+  - Ambas instancias tienen acceso a S3 para obtener los archivos de despliegue
+
+- **Bucket S3**:
+  - Nombre: `ai4devs-project-code-bucket`
+  - Contiene los archivos `frontend.zip` y `backend.zip`
+  - Configurado con versionamiento y encriptación AES256
+
+- **Integración con Datadog**:
+  - Monitoreo de métricas de AWS
+  - Dashboard personalizado para visualizar métricas
+  - Agente Datadog instalado en las instancias EC2
+
+### Proceso de Despliegue
+
+1. **Generación de Archivos ZIP**:
+   - El script `generar-zip.sh` crea los archivos `frontend.zip` y `backend.zip`
+   - Se ejecuta automáticamente durante `terraform plan` y `terraform apply`
+   - Utiliza WSL para ejecutar el comando `zip`
+
+2. **Despliegue con Terraform**:
+   - Los archivos se suben al bucket S3
+   - Las instancias EC2 se configuran con los scripts de usuario
+   - Se configuran los grupos de seguridad y políticas IAM
+
+3. **Monitoreo**:
+   - Datadog recopila métricas de AWS
+   - Dashboard personalizado muestra métricas relevantes
+   - Logs de Docker y aplicaciones son enviados a Datadog
+
+### Requisitos Previos
+
+- AWS CLI configurado con credenciales válidas
+- WSL instalado y configurado
+- Comando `zip` instalado en WSL
+- Credenciales de Datadog (API key y APP key)
+
+### Comandos Importantes
+
+```bash
+# Generar archivos ZIP manualmente
+wsl bash ./generar-zip.sh
+
+# Planificar cambios en la infraestructura
+cd tf
+terraform plan
+
+# Aplicar cambios en la infraestructura
+terraform apply
+```
 
 ## Primeros Pasos
 
@@ -68,7 +126,7 @@ npm install
 ```
 cd backend
 npm run build
-````
+```
 4. Inicia el servidor backend:
 ```
 cd backend
