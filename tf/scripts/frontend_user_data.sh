@@ -6,12 +6,12 @@ sudo yum install -y docker
 sudo service docker start
 
 # Instalar el agente Datadog
-DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=${datadog_api_key} DD_SITE="datadoghq.com" bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script.sh)"
+DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=${datadog_api_key} DD_SITE="datadoghq.eu" bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script.sh)"
 
 # Configurar el agente Datadog
 cat > /etc/datadog-agent/datadog.yaml << EOF
 api_key: ${datadog_api_key}
-site: datadoghq.com
+site: datadoghq.eu
 logs:
   enabled: true
   logs_config_container_collect_all: true
@@ -32,6 +32,9 @@ process_config:
   process_collection:
     enabled: true
     interval: 10
+  process_dd_url: https://process.datadoghq.eu
+  process_agent_dd_url: https://process.datadoghq.eu
+  process_agent_url: https://process.datadoghq.eu
 tags:
   - env:${environment}
   - service:frontend

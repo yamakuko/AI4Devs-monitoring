@@ -1,19 +1,3 @@
-# Resumen de Problemas y Soluciones
-
-- **Problema:** El agente de Datadog no se comunica desde la instancia EC2.  
-  **Solución:** Verificar la API Key en el archivo de configuración del agente y reiniciar el servicio.
-
-- **Problema:** La instancia EC2 no tiene acceso a Internet.  
-  **Solución:** Revisar la configuración de red en Terraform (Internet Gateway, Security Groups, rutas) para asegurar que el tráfico de salida está permitido.
-
-- **Problema:** El agente de Datadog no se instala automáticamente en la EC2.  
-  **Solución:** Asegurar que el script de instalación del agente está incluido en el user_data de la instancia EC2 en Terraform.
-
-- **Problema:** La API Key de Datadog es inválida o no está configurada correctamente.  
-  **Solución:** Actualizar la API Key en el archivo de configuración del agente y reiniciar el servicio.
-
----
-
 # Prompts de Datadog y AWS
 
 [2024-03-21 16:00] | GPT-4 | Haz un análisis de la estructura de terraform que se esta montando segun los archivos de configuracion y scripts que tenemos
@@ -154,14 +138,74 @@ En ese mismo formato
 
 [2024-05-25 21:17] | GPT-4 | Explica cómo verificar y actualizar la API Key usada por el agente de Datadog en la instancia EC2, revisando el archivo /etc/datadog-agent/datadog.yaml y reiniciando el agente tras el cambio.
 
-[2024-05-25 21:18] | GPT-4 | se esta instalando datadog en las instancias EC2 de AWS????
+[2024-05-25 21:18] | GPT-4 | se esta instalando datadog en las instancias EC2 de AWS??
 
 [2024-05-25 21:19] | GPT-4 | no aparece en infraestructuras de datadog
 el agente esta instalado en la instancia EC2
 como saber si esta comunicando?
 
-[2024-05-25 21:20] | GPT-4 | como se puede ver que api key esta usando la EC2?
+[2024-05-25 21:19] | GPT-4 | estos sonj los logs del agente en tiempo real
+2025-05-25 22:40:52 UTC | CORE | ERROR | (comp/forwarder/defaultforwarder/transaction/transaction.go:433 in internalProcess) | API Key invalid, dropping transaction for https://process.datadoghq.com/api/v1/collector
+2025-05-25 22:40:52 UTC | CORE | ERROR | (pkg/process/runner/runner.go:495 in readResponseStatuses) | [process] Invalid response from https://process.datadoghq.com: 403 -> <nil>
+2025-05-25 22:41:02 UTC | CORE | ERROR | (comp/forwarder/defaultforwarder/transaction/transaction.go:433 in internalProcess) | API Key invalid, dropping transaction for https://process.datadoghq.com/api/v1/collector
+2025-05-25 22:41:02 UTC | CORE | ERROR | (pkg/process/runner/runner.go:495 in readResponseStatuses) | [process] Invalid response from https://process.datadoghq.com: 403 -> <nil>
+2025-05-25 22:41:05 UTC | CORE | WARN | (pkg/config/remote/service/service.go:906 in ClientGetConfigs) | Timestamp expired at 0001-01-01T00:00:00Z, flushing cache
+2025-05-25 22:41:05 UTC | CORE | ERROR | (pkg/config/remote/client/client.go:450 in pollLoop) | could not update remote-config state: rpc error: code = Unknown desc = empty targets meta in director local store
+2025-05-25 22:41:12 UTC | CORE | ERROR | (comp/forwarder/defaultforwarder/transaction/transaction.go:433 in internalProcess) | API Key invalid, dropping transaction for https://process.datadoghq.com/api/v1/collector
+2025-05-25 22:41:12 UTC | CORE | ERROR | (pkg/process/runner/runner.go:495 in readResponseStatuses) | [process] Invalid response from https://process.datadoghq.com: 403 -> <nil>
+2025-05-25 22:41:22 UTC | CORE | ERROR | (comp/forwarder/defaultforwarder/transaction/transaction.go:433 in internalProcess) | API Key invalid, dropping transaction for https://process.datadoghq.com/api/v1/collector
+2025-05-25 22:41:22 UTC | CORE | ERROR | (pkg/process/runner/runner.go:495 in readResponseStatuses) | [process] Invalid response from https://process.datadoghq.com: 403 -> <nil>
+2025-05-25 22:41:32 UTC | CORE | ERROR | (comp/forwarder/defaultforwarder/transaction/transaction.go:433 in internalProcess) | API Key invalid, dropping transaction for https://process.datadoghq.com/api/v1/collector
+2025-05-25 22:41:32 UTC | CORE | ERROR | (pkg/process/runner/runner.go:495 in readResponseStatuses) | [process] Invalid response from https://process.datadoghq.com: 403 -> <nil>
+2025-05-25 22:41:35 UTC | CORE | WARN | (pkg/config/remote/service/service.go:906 in ClientGetConfigs) | Timestamp expired at 0001-01-01T00:00:00Z, flushing cache
+2025-05-25 22:41:42 UTC | CORE | ERROR | (comp/forwarder/defaultforwarder/transaction/transaction.go:433 in internalProcess) | API Key invalid, dropping transaction for https://process.datadoghq.com/api/v1/collector
+2025-05-25 22:41:42 UTC | CORE | ERROR | (pkg/process/runner/runner.go:495 in readResponseStatuses) | [process] Invalid response from https://process.datadoghq.com: 403 -> <nil>
+
+[2024-05-25 21:19] | GPT-4 | veo que los servidores responden de datadog.com y yo estoy en datadog.eu
 
 
+[2024-05-25 21:19] | GPT-4 | ahora muestra esto:
+2025-05-25 22:50:02 UTC | CORE | ERROR | (comp/forwarder/defaultforwarder/transaction/transaction.go:433 in internalProcess) | API Key invalid, dropping transaction for https://process.datadoghq.com/api/v1/collector
+2025-05-25 22:50:02 UTC | CORE | ERROR | (pkg/process/runner/runner.go:495 in readResponseStatuses) | [process] Invalid response from https://process.datadoghq.com: 403 -> <nil>
+2025-05-25 22:50:04 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:telemetry | Running check...
+2025-05-25 22:50:04 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:telemetry | Done running check
+2025-05-25 22:50:05 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:memory | Running check...
+2025-05-25 22:50:05 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:memory | Done running check
+2025-05-25 22:50:06 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:io | Running check...
+2025-05-25 22:50:06 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:io | Done running check
+2025-05-25 22:50:07 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:disk | Running check...
+2025-05-25 22:50:07 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:disk | Done running check
+2025-05-25 22:50:08 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:container_lifecycle | Running check...
+2025-05-25 22:50:08 UTC | CORE | INFO | (pkg/collector/corechecks/containerlifecycle/check.go:92 in Run) | Starting long-running check "container_lifecycle"
+2025-05-25 22:50:08 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:container_lifecycle | Done running check
+2025-05-25 22:50:11 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:uptime | Running check...
+2025-05-25 22:50:11 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:uptime | Done running check
+2025-05-25 22:50:12 UTC | CORE | INFO | (pkg/process/runner/runner.go:234 in logCheckDuration) | Finished process check #3 in 8.662779ms
+2025-05-25 22:50:12 UTC | CORE | ERROR | (comp/forwarder/defaultforwarder/transaction/transaction.go:433 in internalProcess) | API Key invalid, dropping transaction for https://process.datadoghq.com/api/v1/collector
+2025-05-25 22:50:12 UTC | CORE | ERROR | (pkg/process/runner/runner.go:495 in readResponseStatuses) | [process] Invalid response from https://process.datadoghq.com: 403 -> <nil>
+2025-05-25 22:50:12 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:network | Running check...
+2025-05-25 22:50:12 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:network | Done running check
+2025-05-25 22:50:13 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:load | Running check...
+2025-05-25 22:50:13 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:load | Done running check
+2025-05-25 22:50:14 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:file_handle | Running check...
+2025-05-25 22:50:14 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:file_handle | Done running check
+2025-05-25 22:50:15 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:cpu | Running check...
+2025-05-25 22:50:15 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:cpu | Done running check
+2025-05-25 22:50:16 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:container_image | Running check...
+2025-05-25 22:50:16 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:container_image | Done running check
+2025-05-25 22:50:19 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:telemetry | Running check...
+2025-05-25 22:50:19 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:59 in CheckFinished) | check:telemetry | Done running check
+2025-05-25 22:50:20 UTC | CORE | INFO | (pkg/collector/worker/check_logger.go:40 in CheckStarted) | check:memory | Running check...
 
 
+[2024-05-25 21:19] | GPT-4 | ya se ha encontrado el error
+
+
+[2024-05-25 21:19] | GPT-4 | en el archivo de la instancia ec2 /etc/datadog-agent/datadog.yaml, el site sigue saliendo como datadoghq.com
+Lo he modificado a mano desde la instancia a datadoghq.eu, reseteado el agente y ya comunica bien
+
+
+[2024-05-25 21:19] | GPT-4 | No, lo que tenemos que hacer es que al lanzar terraform automaticamente en el archivo /etc/datadog-agent/datadog.yaml ya vaya con el site correcto
+
+
+[2024-05-25 21:19] | GPT-4 | dime que fichero es el que se encarga de instalar dadtadog en la instancia ec2

@@ -122,12 +122,3 @@ resource "datadog_dashboard" "infrastructure_dashboard" {
   #]
 } 
 
-# Output de debug temporal para ver cómo se están generando los tags
-output "dashboard_tags" {
-  value = [
-    "team:ai4devs",
-    "env:development",
-    "managed-by:terraform",
-    "service:monitoring"
-  ]
-}
